@@ -24,7 +24,7 @@ GUI and manipulate images.
 The script used to construct and save the below networks is included in the
 project under the file name "Network_Builder_TF.py".
     
-1) Naive NN:
+1) Naive DNN:
     Fully connected neural network built with little experimentation and
     trained in minutes thanks to its minimal size. See below for details
     regarding the specific network structure and training parameters of the
@@ -49,11 +49,11 @@ project under the file name "Network_Builder_TF.py".
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
                 
-2) Optimized NN:
+2) Optimized DNN:
     Another fully connected neural network, but built through more
     experimentation, andavnced techniques, and optimization of parameters in
     order to imporove performance. See below for details regarding the specific
-    techniques used, network structure and training parameters of the model.
+    techniques used, network structure, and training parameters of the model.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  Network: 
    -Structure: Two hiddden layers (784,800,800,10)
@@ -79,12 +79,12 @@ project under the file name "Network_Builder_TF.py".
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
                 
-3) Convolution NN:
+3) Naive CNN:
     Simple convolutional neural network that uses two convolutional layers
     and a single fully connected hidden layer. Convolutional networks have been
     proven to generalize and perform very well on image recognition models.
     See below for details regarding the specific techniques used, network
-    structure and training parameters of the model.
+    structure, and training parameters of the model.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  Network: 
    -Structure: Convolutional Neural Network
@@ -93,34 +93,103 @@ project under the file name "Network_Builder_TF.py".
            -#  of Feature Maps: 20
            -Local Receptive Field: 5 x 5
            -Stride Length: 1
+           -Activation: ReLU
            -Pooling: 2 x 2 input region Max Pooling
        -Layer 2: Convolutional Pooling LAyer
            -Input: 20 x 12 x 12 output of Convo. Layer 1
            -#  of Feature Maps: 20
            -Local Receptive Field: 5 x 5
            -Stride Length: 1
+           -Activation: ReLU
            -Pooling: 2 x 2 input region Max Pooling
        -Layer 3: Dense Neural Network
            -Structure: [640,100,10]
            -Activations: ReLU for 100 hidden nodes, SoftMax for Output Layer
-   -Initialization: Random starting weights/biases chosen from gaussina distr.
-       -Biases: mean = 0, std = 1
-       -Weights: mean = 0, std = 1/(# inputs)^(1/2)
+   -Initialization: Using default initializers for each layer
+       -Biases: 0
+       -Weights: Randomly chosen from Glorot Uniform Distr.
 
  Training:
    -Cross Entropy Cost Function
-   -Regularization 
-       -max-norm wieght contraint with l=4
-       -Dropout: Hidden Layers Rate = .5, Input Layer Rate = .2
-   -Momentum Based Stochastic Gradient Descent
-       -Friction Coeff = .5
-       -Learning Speed: Eta = .5*.995^(t) where t is the epoch number 
-   -Trained for 1000 epochs with minibatches of size 100
+   -Stochastic Gradient Descent
+       -Learning Speed: Eta = .5 
+   -Trained for 30 epochs with minibatches of size 100
 
  Performance:
-   -Accuracy: ~98.9%
+   -Accuracy: ~99.2%
    -# of Parameters: 85,670
-   -Training Time: ~1 hour
+   -Training Time: ~1.5 minutes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                
+4) Convolution DNN:
+    Simple convolutional neural network that uses four convolutional layers
+    and a much larger fully connected hidden layer. Several techniques used to
+    optimize Network 2 as well as others are used here to optimize this
+    network, imporve training, and maximize performance. 
+    Of particular significance is the changes we made to our training data. To
+    help our network generalize better we trained it using a much lareger set
+    of training examples created by augmenting the images in the MNIST dataset.
+    We augmented each image by rotating, shearing, shifting, and zooming by a 
+    random amount.
+    See below for details regarding the specific techniques used, network
+    structure, and training parameters of the model.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Network: 
+   -Structure: Convolutional Neural Network
+       -Layer 1: Convolutional Pooling Layer
+           -Input: 1 x 28 x 28 image
+           -#  of Feature Maps: 32
+           -Local Receptive Field: 3 x 3
+           -Stride Length: 1
+           -Activation: ReLU
+       -Layer 2: Convolutional Pooling Layer
+           -Input: 32 x 26 x 26 output of Convo Layer 1
+           -#  of Feature Maps: 32
+           -Local Receptive Field: 3 x 3
+           -Stride Length: 1
+           -Pooling: 2 x 2 input region Max Pooling
+           -Activation: ReLU
+       -Layer 3: Convolutional Pooling LAyer
+           -Input: 32 x 12 x 12 output of Convo. Layer 2
+           -#  of Feature Maps: 32
+           -Local Receptive Field: 3 x 3
+           -Stride Length: 1
+           -Activation: ReLU
+       -Layer 4: Convolutional Pooling Layer
+           -Input: 32 x 10 x 10 output of Convo Layer 3
+           -#  of Feature Maps: 32
+           -Local Receptive Field: 3 x 3
+           -Stride Length: 1
+           -Pooling: 2 x 2 input region Max Pooling
+           -Activation: ReLU
+       -Layer 5: Dense Neural Network
+           -Structure: [800,1000,1000,10]
+           -Activations: ReLU for hidden nodes, SoftMax for Output Layer
+           -Regularization: 
+               -Max-Norm wieght contraint with l=4
+               -Dropout Rate = .5
+   -Initialization: Using default initializers for each layer
+       -Biases: 0
+       -Weights: Randomly chosen from Glorot Uniform Distr.
+   -Batch Normalization:
+       -technique used on all output layers
+       -normalizes layer outputs to improve training speed
+
+ Training:
+   -Trained on enlarged dataset of augmented images
+       -New training examples created by rotating, shearing, shifting,
+       and zooming of original MNIST dataset
+   -Cross Entropy Cost Function
+   -Momentum Based Stochastic Gradient Descent
+       -Friction Coeff = .5
+       -Learning Speed: Eta = .1*.998^(t) where t is the epoch number 
+   -Trained for 1000 epochs with 600 minibatches of size 100 per epoch
+
+ Performance:
+   -Accuracy: 99.68% +/- .03%
+   -# of Parameters: 1,556,330
+   -Training Time: ~7 hours
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 """
 
@@ -141,15 +210,19 @@ folder = 'Network_Builder/Saved_Networks/'
 
 filename_1 = 'network1_tf'
 net_1 = tf.keras.models.load_model(folder + filename_1)
-print('Naive NN loaded')
+print('Naive DNN loaded')
 
 filename_2 = 'network2_tf'
 net_2 = tf.keras.models.load_model(folder + filename_2)
-print('Optimized NN loaded')
+print('Optimized DNN loaded')
 
 filename_3 = 'network3_tf'
 net_3 = tf.keras.models.load_model(folder + filename_3)
-print('Convolution NN loaded')
+print('Naive CNN loaded')
+
+filename_4 = 'network4_tf'
+net_4 = tf.keras.models.load_model(folder + filename_3)
+print('Optimized CNN loaded')
 
 
 ### Creating Interactive Tkinter GUI
@@ -167,7 +240,7 @@ mainWindow = tkinter.Tk()
 mainWindow.title("ANN Digit Classifier")
 
 mainWindow_width = 920
-mainWindow_height = 550
+mainWindow_height = 600
 header_height = 10
 mainWindow.geometry('{}x{}'.format(mainWindow_width, mainWindow_height+header_height))
 
@@ -231,6 +304,9 @@ def classify():
     elif selected_classifier == 3:
         img = image2.copy().reshape((1,28,28,1))
         result = net_3(img).numpy().reshape((10,1))
+    elif selected_classifier == 4:
+        img = image2.copy().reshape((1,28,28,1))
+        result = net_4(img).numpy().reshape((10,1))
     
     bar0.configure(value = result[0][0]*100)
     bar0_value.configure(text = ('%5.4f'%(result[0][0])))
@@ -310,14 +386,18 @@ network_label = tkinter.Label(right_frame, text = 'ANN Classifier Model', font=(
 network_label.grid(column = 0, row = 0, columnspan = 10)
 
 # Radio buttons for choosing which ANN classifies the image
+buttom_frame = tkinter.Frame(right_frame, width=mainWindow_width/2, height=mainWindow_height)
+buttom_frame.grid(column = 0, row = 1, columnspan = 10)
 selected = tkinter.IntVar(value=1)
-radio1 = tkinter.Radiobutton(right_frame, text='Naive NN', font=('TkDefaultFont', 12), value = 1, variable = selected, pady = 10)
-radio2 = tkinter.Radiobutton(right_frame, text='Optimized NN', font=('TkDefaultFont', 12), value = 2, variable = selected, pady = 10)
-radio3 = tkinter.Radiobutton(right_frame, text='Convolution NN', font=('TkDefaultFont', 12), value = 3, variable = selected, pady = 10)
+radio1 = tkinter.Radiobutton(buttom_frame, text='Naive DNN', font=('TkDefaultFont', 14), value = 1, variable = selected, pady = 10)
+radio2 = tkinter.Radiobutton(buttom_frame, text='Optimized DNN', font=('TkDefaultFont', 14), value = 2, variable = selected, pady = 10)
+radio3 = tkinter.Radiobutton(buttom_frame, text='Naive CNN', font=('TkDefaultFont', 14), value = 3, variable = selected, pady = 10)
+radio4 = tkinter.Radiobutton(buttom_frame, text='Optimized CNN', font=('TkDefaultFont', 14), value = 4, variable = selected, pady = 10)
 
-radio1.grid(column = 0, row = 1, columnspan = 3)
-radio2.grid(column = 3, row = 1, columnspan = 4)
-radio3.grid(column = 7, row = 1, columnspan = 3)
+radio1.grid(column = 0, row = 0, columnspan = 5)
+radio2.grid(column = 5, row = 0, columnspan = 5)
+radio3.grid(column = 0, row = 1, columnspan = 5)
+radio4.grid(column = 5, row = 1, columnspan = 5)
 
 # Button for evaluating classification of image using chosen model
 classify_button = tkinter.Button(right_frame, text='Classify\nImage', bg = 'blue', fg = 'white', font=('TkDefaultFont', 24, 'bold'), padx=10, pady=10, command=classify)
@@ -325,7 +405,7 @@ classify_button.grid(column = 0, row = 2, columnspan = 5)
 
 # Classification results
 # Specifically an image of the resultant classification/number chosen by or model
-image_label = tkinter.Label(right_frame, image=number_images[0], pady = 10)
+image_label = tkinter.Label(right_frame, image=number_images[0])
 image_label.grid(column = 5, row = 2, columnspan = 5)
 
 # Label above model activations (array of values for each classification)
