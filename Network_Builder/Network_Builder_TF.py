@@ -190,7 +190,7 @@ net_2.save(foldername+filename, save_format='tf')
 #           -Activation: ReLU
 #           -Pooling: 2 x 2 input region Max Pooling
 #       -Layer 2: Convolutional Pooling LAyer
-#           -Input: 20 x 12 x 12 output of Convo. Layer 1
+#           -Input: 40 x 12 x 12 output of Convo. Layer 1
 #           -#  of Feature Maps: 20
 #           -Local Receptive Field: 5 x 5
 #           -Stride Length: 1

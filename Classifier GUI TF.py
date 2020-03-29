@@ -97,7 +97,7 @@ project under the file name "Network_Builder_TF.py".
            -Pooling: 2 x 2 input region Max Pooling
        -Layer 2: Convolutional Pooling LAyer
            -Input: 20 x 12 x 12 output of Convo. Layer 1
-           -#  of Feature Maps: 20
+           -#  of Feature Maps: 40
            -Local Receptive Field: 5 x 5
            -Stride Length: 1
            -Activation: ReLU
@@ -122,7 +122,7 @@ project under the file name "Network_Builder_TF.py".
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
                 
-4) Convolution DNN:
+4) Optimized CNN:
     Simple convolutional neural network that uses four convolutional layers
     and a much larger fully connected hidden layer. Several techniques used to
     optimize Network 2 as well as others are used here to optimize this
@@ -221,7 +221,7 @@ net_3 = tf.keras.models.load_model(folder + filename_3)
 print('Naive CNN loaded')
 
 filename_4 = 'network4_tf'
-net_4 = tf.keras.models.load_model(folder + filename_3)
+net_4 = tf.keras.models.load_model(folder + filename_4)
 print('Optimized CNN loaded')
 
 
@@ -279,7 +279,7 @@ def image_resize(img):
     Just resizes the image to be 28 x 28 using BILENEAR interpolation.
     """
     img2 = img.copy().resize((28,28),PIL.Image.BILINEAR)
-    img2 = np.array(img2).reshape((1,28,28))
+    img2 = np.array(img2).reshape((1,28,28))/255
     return img2
 
 # Images used for displaying model classification output
