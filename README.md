@@ -1,6 +1,8 @@
 # Digit_Classifier
 ### Create Neural Networks to Classify Handwritten Digits
 
+<img src="/Number_Images/Classifier_Image.png" width=800>
+
 This project is meant to serve as an introduction to neural networks through the simple use-case of classifying handwritten digits. To accomplish this we did the following: 
 1) Built, trained, and tested simple fully connected neural networks from scratch using numpy and the MNIST database
 2) Improved on our simple models by incorporating advanced techniques into our networks 
